@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Board</title>
+  <style>
+    .column {
+      float: left;
+      width: 30%;
+      padding: 10px;
+    }
+    .task {
+      background-color: lightgray;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Task Board</h1>
+  <div>
+    <input type="text" id="newTask" placeholder="New Task">
+    <button onclick="addTask()">Add Task</button>
+  </div>
+
+  <div class="column">
+    <h2>ToDo</h2>
+    <div id="todo"></div>
+  </div>
+  <div class="column">
+    <h2>In Progress</h2>
+    <div id="in-progress"></div>
+  </div>
+  <div class="column">
+    <h2>Done</h2>
+    <div id="done"></div>
+  </div>
+
+  <script>
+    async function fetchTasks() {
+      const response = await fetch('/tasks');
+      const tasks = await response.json();
+      document.getElementById('todo').innerHTML = '';
+      document.getElementById('in-progress').innerHTML = '';
+      document.getElementById('done').innerHTML = '';
+
+      tasks.forEach(task => {
+        const taskElement = document.createElement('div');
+        taskElement.className = 'task';
+        taskElement.textContent = task.title;
+        taskElement.onclick = () => updateTaskStatus(task.id);
+
+        if (task.status === 'ToDo') {
+          document.getElementById('todo').appendChild(taskElement);
+        } else if (task.status === 'In Progress') {
+          document.getElementById('in-progress').appendChild(taskElement);
+        } else if (task.status === 'Done') {
+          document.getElementById('done').appendChild(taskElement);
+        }
+      });
+    }
+
+    async function addTask() {
+      const title = document.getElementById('newTask').value;
+      if (title) {
+        await fetch('/tasks', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title })
+        });
+        document.getElementById('newTask').value = '';
+        fetchTasks();
+      }
+    }
+
+    async function updateTaskStatus(id) {
+      const newStatus = prompt('Enter new status (ToDo, In Progress, Done):');
+      if (newStatus) {
+        await fetch(`/tasks/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: newStatus })
+        });
+        fetchTasks();
+      }
+    }
+
+    fetchTasks();
+  </script>
+</body>
+</html>
