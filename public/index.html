@@ -1,92 +1,61 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Task Board</title>
-  <style>
-    .column {
-      float: left;
-      width: 30%;
-      padding: 10px;
-    }
-    .task {
-      background-color: lightgray;
-      padding: 10px;
-      margin-bottom: 10px;
-    }
-  </style>
+  <title>HARU - プロフィール</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Task Board</h1>
-  <div>
-    <input type="text" id="newTask" placeholder="New Task">
-    <button onclick="addTask()">Add Task</button>
-  </div>
+  <header>
+    <div class="header-container">
+      <div class="logo">
+        <h1>HARU</h1>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="#about">自己紹介</a></li>
+          <li><a href="#achievements">実績</a></li>
+          <li><a href="#contact">お問い合わせ</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="hero">
+      <p>大会運営におけるHARUの実績とビジョン</p>
+      <a href="#contact" class="cta-button">お問い合わせ</a>
+    </div>
+  </header>
 
-  <div class="column">
-    <h2>ToDo</h2>
-    <div id="todo"></div>
-  </div>
-  <div class="column">
-    <h2>In Progress</h2>
-    <div id="in-progress"></div>
-  </div>
-  <div class="column">
-    <h2>Done</h2>
-    <div id="done"></div>
-  </div>
+  <section id="about" class="about">
+    <h2>自己紹介</h2>
+    <p>HARUは、VALORANTコミュニティの大会運営を中心に活動し、プレイヤー同士が繋がり合う場を提供しています。</p>
+  </section>
 
-  <script>
-    async function fetchTasks() {
-      const response = await fetch('/tasks');
-      const tasks = await response.json();
-      document.getElementById('todo').innerHTML = '';
-      document.getElementById('in-progress').innerHTML = '';
-      document.getElementById('done').innerHTML = '';
+  <section id="achievements" class="achievements">
+    <h2>大会運営実績</h2>
+    <p>これまでの大会運営実績の一部をご紹介します。</p>
+    <div class="grid">
+      <div class="grid-item">
+        <h3>大会実績 1</h3>
+        <p><a href="https://docs.google.com/spreadsheets/d/1SxbmqB-D3-1nb969xO4LeMZLn581d1yLDbPdNetAfC8/edit?gid=0#gid=0" target="_blank">詳細を見る</a></p>
+      </div>
+      <div class="grid-item">
+        <h3>大会実績 2</h3>
+        <p>詳細は準備中</p>
+      </div>
+      <!-- 他の実績を追加 -->
+    </div>
+    <p>その他の実績の閲覧を希望される方は <a href="mailto:haru@potatopjt.com">haru@potatopjt.com</a> までご連絡ください。</p>
+  </section>
 
-      tasks.forEach(task => {
-        const taskElement = document.createElement('div');
-        taskElement.className = 'task';
-        taskElement.textContent = task.title;
-        taskElement.onclick = () => updateTaskStatus(task.id);
+  <section id="contact" class="contact">
+    <h2>お問い合わせ</h2>
+    <p>大会運営やその他のご質問がある方は、以下のメールアドレスまでご連絡ください。</p>
+    <p><a href="mailto:haru@potatopjt.com" class="cta-button">haru@potatopjt.com</a></p>
+  </section>
 
-        if (task.status === 'ToDo') {
-          document.getElementById('todo').appendChild(taskElement);
-        } else if (task.status === 'In Progress') {
-          document.getElementById('in-progress').appendChild(taskElement);
-        } else if (task.status === 'Done') {
-          document.getElementById('done').appendChild(taskElement);
-        }
-      });
-    }
-
-    async function addTask() {
-      const title = document.getElementById('newTask').value;
-      if (title) {
-        await fetch('/tasks', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title })
-        });
-        document.getElementById('newTask').value = '';
-        fetchTasks();
-      }
-    }
-
-    async function updateTaskStatus(id) {
-      const newStatus = prompt('Enter new status (ToDo, In Progress, Done):');
-      if (newStatus) {
-        await fetch(`/tasks/${id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ status: newStatus })
-        });
-        fetchTasks();
-      }
-    }
-
-    fetchTasks();
-  </script>
+  <footer>
+    <p>&copy; 2024 HARU. All rights reserved.</p>
+  </footer>
 </body>
 </html>
